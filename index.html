@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albion Online Economic Tools</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <div class="container">
+                <h1>Albion Economic Tools</h1>
+                <nav class="main-nav">
+                    <button class="nav-tab active" data-tab="price-checker">Price Checker</button>
+                    <button class="nav-tab" data-tab="crafting">Crafting Calculator</button>
+                    <button class="nav-tab" data-tab="flipping">Market Flipping</button>
+                    <button class="nav-tab" data-tab="farming">Farming Tools</button>
+                    <button class="nav-tab" data-tab="scanner">Screen Scanner</button>
+                </nav>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="theme-toggle">🌙</button>
+                    <button id="export-data" class="btn-secondary">Export Data</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="container">
+                <!-- Price Checker Tab -->
+                <div id="price-checker" class="tab-content active">
+                    <!-- Price checker content will be loaded here -->
+                </div>
+
+                <!-- Crafting Calculator Tab -->
+                <div id="crafting" class="tab-content">
+                    <!-- Crafting calculator content will be loaded here -->
+                </div>
+
+                <!-- Other tabs... -->
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="container">
+                <p>Albion Online Economic Tools - Not affiliated with Sandbox Interactive GmbH</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script src="js/data/items.js"></script>
+    <script src="js/data/recipes.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/calculators/crafting.js"></script>
+    <script src="js/calculators/flipping.js"></script>
+    <script src="js/calculators/farming.js"></script>
+    <script src="js/components/price-checker.js"></script>
+    <script src="js/components/scanner.js"></script>
+    <script src="js/components/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
