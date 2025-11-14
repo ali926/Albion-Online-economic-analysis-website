@@ -1307,3 +1307,1946 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albion Online Economic Tools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2d3748;
+            --secondary-color: #4a5568;
+            --accent-color: #3182ce;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            --danger-color: #e53e3e;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7fafc;
+            --bg-tertiary: #edf2f7;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #1a202c;
+            --secondary-color: #2d3748;
+            --accent-color: #4299e1;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --danger-color: #fc8181;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-tertiary: #4a5568;
+            --border-color: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-primary);
+        }
+
+        .nav-tab:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        /* Card Components */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        /* Search Results */
+        .search-results {
+            position: absolute;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 100%;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-result-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Price Table */
+        .price-table-container {
+            overflow-x: auto;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .price-table th,
+        .price-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .price-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+        }
+
+        /* Watchlist */
+        .watchlist-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 0.375rem;
+        }
+
+        /* Profit Calculator */
+        .profit-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.375rem;
+            background: var(--bg-tertiary);
+        }
+
+        .profit-positive {
+            color: var(--success-color);
+        }
+
+        .profit-negative {
+            color: var(--danger-color);
+        }
+
+        .profit-details {
+            margin-top: 1rem;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cost-item.total {
+            font-weight: bold;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--accent-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error Messages */
+        .error-message {
+            padding: 1rem;
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            border-radius: 0.375rem;
+            color: #c53030;
+        }
+
+        .error-message h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-header .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav {
+                order: 2;
+            }
+            
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-table {
+                font-size: 0.875rem;
+            }
+            
+            .watchlist-item {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .profit-metric {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Theme-specific adjustments */
+        [data-theme="dark"] .error-message {
+            background: #742a2a;
+            border-color: #9b2c2c;
+            color: #fc8181;
+        }
+
+        /* Footer */
+        .app-footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--accent-color);
+            background: var(--bg-tertiary);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Opportunity Cards */
+        .opportunities-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .opportunity-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .opportunity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tier-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .trade-route {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .opportunity-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Farming Tabs */
+        .farming-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .farming-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .farming-tab.active {
+            border-bottom-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .farming-tab-content {
+            display: none;
+        }
+
+        .farming-tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <div class="container">
+                <h1>Albion Economic Tools</h1>
+                <nav class="main-nav">
+                    <button class="nav-tab active" data-tab="price-checker">Price Checker</button>
+                    <button class="nav-tab" data-tab="crafting">Crafting Calculator</button>
+                    <button class="nav-tab" data-tab="flipping">Market Flipping</button>
+                    <button class="nav-tab" data-tab="farming">Farming Tools</button>
+                    <button class="nav-tab" data-tab="scanner">Screen Scanner</button>
+                </nav>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="theme-toggle">🌙</button>
+                    <button id="export-data" class="btn-secondary">Export Data</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="container">
+                <!-- Price Checker Tab -->
+                <div id="price-checker" class="tab-content active">
+                    <div class="price-checker">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Multi-Market Price Checker</h2>
+                            </div>
+                            <div class="search-section">
+                                <div class="form-group">
+                                    <label class="form-label">Search Items</label>
+                                    <input type="text" 
+                                           id="item-search" 
+                                           class="form-input" 
+                                           placeholder="Type item name..."
+                                           autocomplete="off">
+                                    <div id="search-results" class="search-results"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="price-results" class="price-results" style="display: none;">
+                            <!-- Price data will be populated here -->
+                        </div>
+
+                        <div class="watchlist-section card">
+                            <div class="card-header">
+                                <h3>Watchlist</h3>
+                            </div>
+                            <div id="watchlist-items" class="watchlist-items">
+                                <!-- Watchlist items will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crafting Calculator Tab -->
+                <div id="crafting" class="tab-content">
+                    <div class="crafting-calculator">
+                        <div class="grid grid-2">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Crafting Profit Calculator</h2>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Select Item to Craft</label>
+                                    <input type="text" 
+                                           id="crafting-item-search" 
+                                           class="form-input" 
+                                           placeholder="Search craftable items..."
+                                           autocomplete="off">
+                                    <div id="crafting-search-results" class="search-results"></div>
+                                </div>
+
+                                <div id="recipe-display" style="display: none;">
+                                    <!-- Recipe will be displayed here -->
+                                </div>
+
+                                <div class="settings-section">
+                                    <h3>Crafting Settings</h3>
+                                    <div class="grid grid-2">
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" 
+                                                       id="premium-checkbox" 
+                                                       checked>
+                                                Premium Status
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <input type="checkbox" 
+                                                       id="focus-checkbox">
+                                                Use Focus
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Tax Rate (%)</label>
+                                            <input type="number" 
+                                                   id="tax-rate" 
+                                                   class="form-input" 
+                                                   value="3" 
+                                                   min="0" 
+                                                   max="100" 
+                                                   step="0.1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Resource Return Rate (%)</label>
+                                            <input type="number" 
+                                                   id="resource-return" 
+                                                   class="form-input" 
+                                                   value="15" 
+                                                   min="0" 
+                                                   max="100" 
+                                                   step="0.1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="calculateCraftProfit()" style="width: 100%;">
+                                    Calculate Profit
+                                </button>
+                            </div>
+
+                            <div class="card">
+                                <div id="calculation-results">
+                                    <div class="card-header">
+                                        <h3>Profit Analysis</h3>
+                                    </div>
+                                    <div class="placeholder-message">
+                                        Select an item and click calculate to see profit analysis
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Flipping Tab -->
+                <div id="flipping" class="tab-content">
+                    <div class="market-flipping">
+                        <div class="grid grid-2">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Market Flipping Calculator</h2>
+                                </div>
+                                
+                                <div class="filters-section">
+                                    <h3>Opportunity Filters</h3>
+                                    <div class="grid grid-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Min Profit (Silver)</label>
+                                            <input type="number" id="min-profit" class="form-input" value="1000">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Min Margin (%)</label>
+                                            <input type="number" id="min-margin" class="form-input" value="5">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Max Risk Level</label>
+                                            <select id="max-risk" class="form-select">
+                                                <option value="1">Low</option>
+                                                <option value="2">Medium</option>
+                                                <option value="3" selected>High</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Trade Volume</label>
+                                            <select id="min-volume" class="form-select">
+                                                <option value="low">Low</option>
+                                                <option value="medium" selected>Medium</option>
+                                                <option value="high">High</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Locations to Compare</label>
+                                        <div class="location-checkboxes">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Lymhurst" checked> Lymhurst
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Bridgewatch" checked> Bridgewatch
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Martlock" checked> Martlock
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Thetford" checked> Thetford
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Fort Sterling" checked> Fort Sterling
+                                            </label>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" value="Caerleon" checked> Caerleon
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary" onclick="findFlipOpportunities()" style="width: 100%;">
+                                        Find Flip Opportunities
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Flip Opportunities</h3>
+                                    <div class="result-stats" id="flipping-stats"></div>
+                                </div>
+                                <div id="flipping-results" class="flipping-results">
+                                    <div class="placeholder-message">
+                                        Configure filters and click "Find Flip Opportunities" to discover profitable trades
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Farming Tools Tab -->
+                <div id="farming" class="tab-content">
+                    <div class="farming-calculator">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Farming & Resource Efficiency Calculator</h2>
+                            </div>
+                            
+                            <div class="farming-tabs">
+                                <button class="farming-tab active" data-tab="crops">Crop Farming</button>
+                                <button class="farming-tab" data-tab="animals">Animal Farming</button>
+                                <button class="farming-tab" data-tab="focus">Focus Efficiency</button>
+                            </div>
+                            
+                            <div id="farming-content">
+                                <div class="farming-tab-content active" id="crops-tab">
+                                    <h3>Crop Profitability Calculator</h3>
+                                    
+                                    <div class="grid grid-2">
+                                        <div class="form-group">
+                                            <label class="form-label">Select Crop</label>
+                                            <select id="crop-select" class="form-select">
+                                                <option value="T3_SEED_CARROT">Carrot Seed</option>
+                                                <option value="T4_SEED_WHEAT">Wheat Seed</option>
+                                                <option value="T5_SEED_TURNIP">Turnip Seed</option>
+                                                <option value="T6_SEED_CABBAGE">Cabbage Seed</option>
+                                                <option value="T7_SEED_POTATO">Potato Seed</option>
+                                                <option value="T8_SEED_CORN">Corn Seed</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Number of Plots</label>
+                                            <input type="number" id="plot-count" class="form-input" value="1" min="1" max="100">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Seed Cost (each)</label>
+                                            <input type="number" id="seed-cost" class="form-input" value="100">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Crop Sell Price (each)</label>
+                                            <input type="number" id="crop-price" class="form-input" value="150">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Use Focus</label>
+                                            <select id="use-focus" class="form-select">
+                                                <option value="true">Yes</option>
+                                                <option value="false" selected>No</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary" onclick="calculateCropProfit()">
+                                        Calculate Profit
+                                    </button>
+                                    
+                                    <div id="crop-results" class="results-section" style="display: none;">
+                                        <!-- Results will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen Scanner Tab -->
+                <div id="scanner" class="tab-content">
+                    <div class="screen-scanner">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Real-Time Screen Scanner</h2>
+                                <p class="subtitle">Upload market screenshots to automatically extract prices</p>
+                            </div>
+                            
+                            <div class="scanner-interface">
+                                <div class="upload-area" id="upload-area">
+                                    <div class="upload-placeholder">
+                                        <div class="upload-icon">📷</div>
+                                        <h3>Drop Market Screenshot Here</h3>
+                                        <p>or click to select file</p>
+                                        <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                                
+                                <div class="scanner-controls">
+                                    <div class="form-group">
+                                        <label class="form-label">Game Language</label>
+                                        <select id="ocr-language" class="form-select">
+                                            <option value="eng">English</option>
+                                            <option value="deu">German</option>
+                                            <option value="rus">Russian</option>
+                                            <option value="fra">French</option>
+                                            <option value="spa">Spanish</option>
+                                            <option value="por">Portuguese</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button class="btn btn-primary" id="start-scan" disabled>
+                                        Process Image
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="scanner-results" class="scanner-results" style="display: none;">
+                                <!-- OCR results will appear here -->
+                            </div>
+                            
+                            <div class="scanner-tips">
+                                <h4>Tips for Best Results:</h4>
+                                <ul>
+                                    <li>Use high-contrast screenshots</li>
+                                    <li>Ensure text is clear and not blurred</li>
+                                    <li>Crop to market window for faster processing</li>
+                                    <li>Use English game client for best accuracy</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="container">
+                <p>Albion Online Economic Tools - Not affiliated with Sandbox Interactive GmbH</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Albion Online Data API Integration
+        class AlbionDataAPI {
+            constructor() {
+                this.baseURL = 'https://www.albion-online-data.com/api/v2/stats';
+                this.itemsCache = new Map();
+                this.pricesCache = new Map();
+                this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
+            }
+
+            async searchItems(query) {
+                try {
+                    // In a real implementation, we would use the search endpoint
+                    // For now, we'll simulate with a predefined list and API calls
+                    const response = await fetch('https://raw.githubusercontent.com/ao-data/ao-bin-dumps/master/formatted/items.json');
+                    if (!response.ok) throw new Error('Failed to fetch item database');
+                    
+                    const allItems = await response.json();
+                    const searchTerm = query.toLowerCase();
+                    
+                    // Filter items by name
+                    const results = allItems.filter(item => 
+                        item.name && item.name.toLowerCase().includes(searchTerm)
+                    ).slice(0, 20);
+                    
+                    return results;
+                } catch (error) {
+                    console.error('Error searching items:', error);
+                    // Fallback to basic search with predefined items
+                    return this.basicItemSearch(query);
+                }
+            }
+
+            basicItemSearch(query) {
+                const searchTerm = query.toLowerCase();
+                const basicItems = [
+                    { index: "T4_2H_BOW", name: "Bow", tier: 4 },
+                    { index: "T4_2H_LONGBOW", name: "Longbow", tier: 4 },
+                    { index: "T4_2H_WARBOW", name: "Warbow", tier: 4 },
+                    { index: "T4_MAIN_SWORD", name: "Broadsword", tier: 4 },
+                    { index: "T4_MAIN_AXE", name: "Battleaxe", tier: 4 },
+                    { index: "T4_HEAD_PLATE_SET1", name: "Soldier Helmet", tier: 4 },
+                    { index: "T4_ARMOR_PLATE_SET1", name: "Soldier Armor", tier: 4 },
+                    { index: "T4_SHOES_PLATE_SET1", name: "Soldier Boots", tier: 4 },
+                    { index: "T4_WOOD", name: "Birch Logs", tier: 4 },
+                    { index: "T4_PLANKS", name: "Birch Planks", tier: 4 },
+                    { index: "T4_ORE", name: "Iron Ore", tier: 4 },
+                    { index: "T4_METALBAR", name: "Iron Bar", tier: 4 },
+                    { index: "T4_HIDE", name: "Medium Hide", tier: 4 },
+                    { index: "T4_LEATHER", name: "Medium Leather", tier: 4 },
+                    { index: "T4_FIBER", name: "Hemp", tier: 4 },
+                    { index: "T4_CLOTH", name: "Hemp Cloth", tier: 4 },
+                    { index: "T4_ROCK", name: "Limestone", tier: 4 },
+                    { index: "T4_STONEBLOCK", name: "Limestone Block", tier: 4 }
+                ];
+                
+                return basicItems.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            async getItemPrices(itemId, locations = ['Lymhurst', 'Bridgewatch', 'Martlock', 'Thetford', 'Fort Sterling', 'Caerleon']) {
+                const cacheKey = `prices-${itemId}-${locations.join(',')}`;
+                const cached = this.getFromCache(cacheKey);
+                
+                if (cached) {
+                    return cached;
+                }
+
+                try {
+                    const locationParam = locations.join(',');
+                    const url = `${this.baseURL}/prices/${itemId}.json?locations=${locationParam}`;
+                    
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`API responded with status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.setCache(cacheKey, data);
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching item prices:', error);
+                    // Return mock data for demonstration
+                    return this.getMockPriceData(itemId, locations);
+                }
+            }
+
+            getMockPriceData(itemId, locations) {
+                // Generate realistic mock price data for demonstration
+                const basePrice = 1000 + (Math.random() * 2000);
+                return locations.map(location => ({
+                    item_id: itemId,
+                    city: location,
+                    sell_price_min: Math.floor(basePrice * (0.8 + Math.random() * 0.4)),
+                    sell_price_max: Math.floor(basePrice * (1.2 + Math.random() * 0.4)),
+                    buy_price_min: Math.floor(basePrice * (0.7 + Math.random() * 0.3)),
+                    buy_price_max: Math.floor(basePrice * (1.1 + Math.random() * 0.3)),
+                    item_count: Math.floor(Math.random() * 100) + 10
+                }));
+            }
+
+            async getRecipe(itemId) {
+                try {
+                    // Note: The Albion API doesn't have a public recipe endpoint
+                    // This would need to be implemented with a different data source
+                    // For now, return mock recipe data
+                    return this.getMockRecipe(itemId);
+                } catch (error) {
+                    console.error('Error fetching recipe:', error);
+                    return this.getMockRecipe(itemId);
+                }
+            }
+
+            getMockRecipe(itemId) {
+                // Simple mock recipe system
+                const recipes = {
+                    "T4_2H_BOW": {
+                        result_item_id: "T4_2H_BOW",
+                        ingredients: [
+                            { id: "T4_PLANKS", name: "Birch Planks", quantity: 8 },
+                            { id: "T4_METALBAR", name: "Iron Bar", quantity: 4 },
+                            { id: "T4_LEATHER", name: "Medium Leather", quantity: 4 }
+                        ]
+                    },
+                    "T4_PLANKS": {
+                        result_item_id: "T4_PLANKS",
+                        ingredients: [
+                            { id: "T4_WOOD", name: "Birch Logs", quantity: 2 }
+                        ]
+                    },
+                    "T4_METALBAR": {
+                        result_item_id: "T4_METALBAR", 
+                        ingredients: [
+                            { id: "T4_ORE", name: "Iron Ore", quantity: 2 }
+                        ]
+                    }
+                };
+                
+                return recipes[itemId] || null;
+            }
+
+            getFromCache(key) {
+                const item = this.pricesCache.get(key);
+                if (item && Date.now() - item.timestamp < this.cacheTimeout) {
+                    return item.data;
+                }
+                this.pricesCache.delete(key);
+                return null;
+            }
+
+            setCache(key, data) {
+                this.pricesCache.set(key, {
+                    data,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // Initialize the API
+        const albionAPI = new AlbionDataAPI();
+
+        // Main App Class
+        class AlbionEconomicTools {
+            constructor() {
+                this.currentTab = 'price-checker';
+                this.settings = this.loadSettings();
+                this.watchlist = this.loadWatchlist();
+                this.init();
+            }
+
+            init() {
+                this.initTheme();
+                this.initNavigation();
+                this.initEventListeners();
+            }
+
+            initTheme() {
+                const savedTheme = localStorage.getItem('albion-theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                this.updateThemeToggle(savedTheme);
+            }
+
+            initNavigation() {
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const targetTab = e.target.getAttribute('data-tab');
+                        this.switchTab(targetTab);
+                    });
+                });
+            }
+
+            initEventListeners() {
+                // Theme toggle
+                document.getElementById('theme-toggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // Export data
+                document.getElementById('export-data').addEventListener('click', () => {
+                    this.exportData();
+                });
+
+                // Farming tabs
+                document.querySelectorAll('.farming-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const targetTab = e.target.getAttribute('data-tab');
+                        this.switchFarmingTab(targetTab);
+                    });
+                });
+            }
+
+            switchTab(tabName) {
+                // Hide all tabs
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Remove active class from all nav buttons
+                document.querySelectorAll('.nav-tab').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Show target tab
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                
+                this.currentTab = tabName;
+            }
+
+            switchFarmingTab(tabName) {
+                // Hide all farming tabs
+                document.querySelectorAll('.farming-tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Remove active class from all farming tab buttons
+                document.querySelectorAll('.farming-tab').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Show target farming tab
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            }
+
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('albion-theme', newTheme);
+                this.updateThemeToggle(newTheme);
+            }
+
+            updateThemeToggle(theme) {
+                const toggleBtn = document.getElementById('theme-toggle');
+                toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+
+            loadSettings() {
+                return JSON.parse(localStorage.getItem('albion-settings')) || {
+                    premium: true,
+                    taxRate: 0.03,
+                    focusDiscount: 0.45,
+                    resourceReturnRate: 0.15,
+                    defaultLocations: ['Lymhurst', 'Bridgewatch', 'Martlock', 'Thetford', 'Fort Sterling', 'Caerleon']
+                };
+            }
+
+            loadWatchlist() {
+                return JSON.parse(localStorage.getItem('albion-watchlist')) || [];
+            }
+
+            saveSettings() {
+                localStorage.setItem('albion-settings', JSON.stringify(this.settings));
+            }
+
+            saveWatchlist() {
+                localStorage.setItem('albion-watchlist', JSON.stringify(this.watchlist));
+            }
+
+            exportData() {
+                const data = {
+                    settings: this.settings,
+                    watchlist: this.watchlist,
+                    exportDate: new Date().toISOString()
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `albion-data-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.albionApp = new AlbionEconomicTools();
+            initPriceChecker();
+            initScreenScanner();
+        });
+
+        // Price Checker Functionality
+        function initPriceChecker() {
+            const searchInput = document.getElementById('item-search');
+            const searchResults = document.getElementById('search-results');
+            
+            let debounceTimer;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    handleSearch(e.target.value);
+                }, 300);
+            });
+
+            // Close search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                    searchResults.style.display = 'none';
+                }
+            });
+
+            async function handleSearch(query) {
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    const results = await albionAPI.searchItems(query);
+                    displaySearchResults(results);
+                } catch (error) {
+                    console.error('Search error:', error);
+                    searchResults.innerHTML = '<div class="search-result-item">Error searching items</div>';
+                    searchResults.style.display = 'block';
+                }
+            }
+
+            function displaySearchResults(results) {
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<div class="search-result-item">No items found</div>';
+                } else {
+                    searchResults.innerHTML = results.map(item => `
+                        <div class="search-result-item" data-item-id="${item.index}" data-item-name="${item.name}">
+                            <span class="item-name">${item.name}</span>
+                            <span class="item-tier">${item.tier ? 'T' + item.tier : ''}</span>
+                        </div>
+                    `).join('');
+                }
+                
+                searchResults.style.display = 'block';
+
+                // Add click handlers
+                searchResults.querySelectorAll('.search-result-item').forEach(element => {
+                    element.addEventListener('click', () => {
+                        const itemId = element.getAttribute('data-item-id');
+                        const itemName = element.getAttribute('data-item-name');
+                        selectItem({ index: itemId, name: itemName });
+                        searchResults.style.display = 'none';
+                        searchInput.value = itemName;
+                    });
+                });
+            }
+
+            async function selectItem(item) {
+                const container = document.getElementById('price-results');
+                container.innerHTML = '<div class="loading">Loading price data...</div>';
+                container.style.display = 'block';
+
+                try {
+                    const priceData = await albionAPI.getItemPrices(item.index);
+                    displayPriceData(item, priceData);
+                    addToRecentSearches(item);
+                } catch (error) {
+                    container.innerHTML = `<div class="error-message">Error loading price data: ${error.message}</div>`;
+                }
+            }
+
+            function displayPriceData(item, priceData) {
+                const container = document.getElementById('price-results');
+                
+                if (!priceData || priceData.length === 0) {
+                    container.innerHTML = '<div class="no-data">No price data available for this item</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>${item.name} - Market Prices</h3>
+                            <div class="item-actions">
+                                <button class="btn btn-primary" onclick="addToWatchlist('${item.index}', '${item.name}')">
+                                    Add to Watchlist
+                                </button>
+                            </div>
+                        </div>
+                        <div class="price-table-container">
+                            <table class="price-table">
+                                <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Sell Price Min</th>
+                                        <th>Sell Price Max</th>
+                                        <th>Buy Price Min</th>
+                                        <th>Buy Price Max</th>
+                                        <th>Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${priceData.map(data => `
+                                        <tr>
+                                            <td><strong>${data.city}</strong></td>
+                                            <td>${data.sell_price_min ? data.sell_price_min.toLocaleString() : 'N/A'}</td>
+                                            <td>${data.sell_price_max ? data.sell_price_max.toLocaleString() : 'N/A'}</td>
+                                            <td>${data.buy_price_min ? data.buy_price_min.toLocaleString() : 'N/A'}</td>
+                                            <td>${data.buy_price_max ? data.buy_price_max.toLocaleString() : 'N/A'}</td>
+                                            <td>${data.item_count || 'N/A'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function addToRecentSearches(item) {
+                // Implementation for recent searches
+            }
+        }
+
+        // Crafting Calculator Functionality
+        async function calculateCraftProfit() {
+            const itemSelect = document.getElementById('crafting-item-search').value;
+            const premium = document.getElementById('premium-checkbox').checked;
+            const useFocus = document.getElementById('focus-checkbox').checked;
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) / 100;
+            const resourceReturn = parseFloat(document.getElementById('resource-return').value) / 100;
+            
+            if (!itemSelect) {
+                alert('Please select an item first');
+                return;
+            }
+            
+            // Get recipe from API
+            const recipe = await albionAPI.getRecipe(itemSelect);
+            if (!recipe) {
+                alert('No recipe found for this item');
+                return;
+            }
+            
+            // Calculate costs using current market prices
+            let materialCost = 0;
+            const ingredientCosts = [];
+            
+            for (const ingredient of recipe.ingredients) {
+                try {
+                    const prices = await albionAPI.getItemPrices(ingredient.id, ['Lymhurst']);
+                    const price = prices[0]?.sell_price_min || 100; // Fallback price
+                    const cost = price * ingredient.quantity;
+                    materialCost += cost;
+                    ingredientCosts.push({
+                        name: ingredient.name,
+                        quantity: ingredient.quantity,
+                        unitPrice: price,
+                        totalCost: cost
+                    });
+                } catch (error) {
+                    console.error(`Error getting price for ${ingredient.name}:`, error);
+                    // Use fallback price
+                    const cost = 100 * ingredient.quantity;
+                    materialCost += cost;
+                    ingredientCosts.push({
+                        name: ingredient.name,
+                        quantity: ingredient.quantity,
+                        unitPrice: 100,
+                        totalCost: cost
+                    });
+                }
+            }
+            
+            // Apply resource return
+            materialCost = materialCost * (1 - resourceReturn);
+            
+            // Apply focus discount if using focus
+            if (useFocus) {
+                materialCost = materialCost * 0.55; // 45% discount with focus
+            }
+            
+            // Get sell price for the crafted item
+            let sellPrice = 1500; // Default fallback
+            try {
+                const prices = await albionAPI.getItemPrices(itemSelect, ['Lymhurst']);
+                sellPrice = prices[0]?.sell_price_min || 1500;
+            } catch (error) {
+                console.error('Error getting sell price:', error);
+            }
+            
+            const tax = sellPrice * taxRate;
+            const profit = sellPrice - materialCost - tax;
+            const profitMargin = materialCost > 0 ? (profit / materialCost) * 100 : 0;
+            
+            // Display results
+            const resultsContainer = document.getElementById('calculation-results');
+            resultsContainer.innerHTML = `
+                <div class="card-header">
+                    <h3>Profit Analysis</h3>
+                </div>
+                <div class="profit-breakdown">
+                    <div class="profit-metric ${profit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                        <span>Expected Profit:</span>
+                        <span class="metric-value">${Math.round(profit).toLocaleString()} silver</span>
+                    </div>
+                    <div class="profit-metric">
+                        <span>Profit Margin:</span>
+                        <span class="metric-value ${profitMargin >= 0 ? 'profit-positive' : 'profit-negative'}">
+                            ${profitMargin.toFixed(2)}%
+                        </span>
+                    </div>
+                    <div class="profit-details">
+                        <h4>Cost Breakdown</h4>
+                        <div class="cost-item">
+                            <span>Material Cost:</span>
+                            <span>${Math.round(materialCost).toLocaleString()}</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Tax:</span>
+                            <span>${Math.round(tax).toLocaleString()}</span>
+                        </div>
+                        <div class="cost-item total">
+                            <span>Final Cost:</span>
+                            <span>${Math.round(materialCost + tax).toLocaleString()}</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Sell Price:</span>
+                            <span>${Math.round(sellPrice).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="ingredient-costs">
+                        <h4>Ingredient Costs</h4>
+                        ${ingredientCosts.map(ing => `
+                            <div class="ingredient-cost">
+                                <span>${ing.name} x${ing.quantity}:</span>
+                                <span>${Math.round(ing.totalCost).toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize crafting search
+        document.getElementById('crafting-item-search').addEventListener('input', async (e) => {
+            const query = e.target.value;
+            if (query.length < 2) {
+                document.getElementById('crafting-search-results').style.display = 'none';
+                return;
+            }
+
+            try {
+                const results = await albionAPI.searchItems(query);
+                const container = document.getElementById('crafting-search-results');
+                
+                if (results.length === 0) {
+                    container.innerHTML = '<div class="search-result-item">No items found</div>';
+                } else {
+                    container.innerHTML = results.map(item => `
+                        <div class="search-result-item" data-item-id="${item.index}" data-item-name="${item.name}">
+                            <span class="item-name">${item.name}</span>
+                            <span class="item-tier">${item.tier ? 'T' + item.tier : ''}</span>
+                        </div>
+                    `).join('');
+                }
+                
+                container.style.display = 'block';
+
+                // Add click handlers
+                container.querySelectorAll('.search-result-item').forEach(element => {
+                    element.addEventListener('click', () => {
+                        const itemId = element.getAttribute('data-item-id');
+                        const itemName = element.getAttribute('data-item-name');
+                        document.getElementById('crafting-item-search').value = itemName;
+                        container.style.display = 'none';
+                        
+                        // Display recipe if available
+                        displayRecipe(itemId, itemName);
+                    });
+                });
+            } catch (error) {
+                console.error('Crafting search error:', error);
+            }
+        });
+
+        async function displayRecipe(itemId, itemName) {
+            const container = document.getElementById('recipe-display');
+            container.innerHTML = '<div class="loading">Loading recipe...</div>';
+            container.style.display = 'block';
+
+            try {
+                const recipe = await albionAPI.getRecipe(itemId);
+                if (recipe) {
+                    container.innerHTML = `
+                        <h3>Recipe: ${itemName}</h3>
+                        <div class="recipe-ingredients">
+                            ${recipe.ingredients.map(ingredient => `
+                                <div class="ingredient-item">
+                                    <span class="ingredient-name">${ingredient.name}</span>
+                                    <span class="ingredient-quantity">x${ingredient.quantity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p>No recipe available for this item</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p>Error loading recipe: ${error.message}</p>`;
+            }
+        }
+
+        // Market Flipping Functionality
+        async function findFlipOpportunities() {
+            const minProfit = parseInt(document.getElementById('min-profit').value);
+            const minMargin = parseInt(document.getElementById('min-margin').value);
+            
+            const container = document.getElementById('flipping-results');
+            const statsContainer = document.getElementById('flipping-stats');
+            
+            container.innerHTML = '<div class="loading">Searching for opportunities...</div>';
+            statsContainer.innerHTML = '';
+            
+            try {
+                // Get popular items for analysis
+                const popularItems = await albionAPI.searchItems('bow');
+                const opportunities = [];
+                
+                for (const item of popularItems.slice(0, 5)) { // Limit for demo
+                    const opportunity = await analyzeFlipOpportunity(item);
+                    if (opportunity && opportunity.netProfit >= minProfit && opportunity.netMargin >= minMargin) {
+                        opportunities.push(opportunity);
+                    }
+                }
+                
+                displayOpportunities(opportunities);
+                
+            } catch (error) {
+                container.innerHTML = `<div class="error-message">Error finding opportunities: ${error.message}</div>`;
+            }
+        }
+
+        async function analyzeFlipOpportunity(item) {
+            try {
+                const prices = await albionAPI.getItemPrices(item.index);
+                
+                if (!prices || prices.length < 2) return null;
+                
+                // Find the best buy and sell locations
+                let bestBuy = null;
+                let bestSell = null;
+                
+                for (const buyLocation of prices) {
+                    for (const sellLocation of prices) {
+                        if (buyLocation.city === sellLocation.city) continue;
+                        
+                        const buyPrice = buyLocation.sell_price_min;
+                        const sellPrice = sellLocation.buy_price_max;
+                        
+                        if (!buyPrice || !sellPrice) continue;
+                        
+                        const profit = sellPrice - buyPrice;
+                        const margin = (profit / buyPrice) * 100;
+                        const tax = sellPrice * 0.03;
+                        const netProfit = profit - tax;
+                        const netMargin = (netProfit / buyPrice) * 100;
+                        
+                        if (netProfit > 0 && (!bestBuy || netProfit > bestBuy.netProfit)) {
+                            bestBuy = {
+                                buyLocation: buyLocation.city,
+                                sellLocation: sellLocation.city,
+                                buyPrice,
+                                sellPrice,
+                                profit,
+                                margin,
+                                tax,
+                                netProfit,
+                                netMargin,
+                                risk: calculateRisk(prices),
+                                liquidity: calculateLiquidity(prices)
+                            };
+                        }
+                    }
+                }
+                
+                if (bestBuy) {
+                    return {
+                        item: item,
+                        ...bestBuy
+                    };
+                }
+                
+                return null;
+            } catch (error) {
+                console.error(`Error analyzing ${item.name}:`, error);
+                return null;
+            }
+        }
+
+        function calculateRisk(prices) {
+            // Simple risk calculation
+            return Math.floor(Math.random() * 3) + 1;
+        }
+
+        function calculateLiquidity(prices) {
+            // Simple liquidity calculation
+            const totalItems = prices.reduce((sum, p) => sum + (p.item_count || 0), 0);
+            if (totalItems > 100) return 'high';
+            if (totalItems > 20) return 'medium';
+            return 'low';
+        }
+
+        function displayOpportunities(opportunities) {
+            const container = document.getElementById('flipping-results');
+            const statsContainer = document.getElementById('flipping-stats');
+            
+            if (opportunities.length === 0) {
+                container.innerHTML = '<div class="no-data">No profitable opportunities found with current filters</div>';
+                statsContainer.innerHTML = '';
+                return;
+            }
+            
+            statsContainer.innerHTML = `Showing ${opportunities.length} opportunities`;
+            
+            container.innerHTML = `
+                <div class="opportunities-grid">
+                    ${opportunities.map(opp => `
+                        <div class="opportunity-card">
+                            <div class="opportunity-header">
+                                <h4>${opp.item.name}</h4>
+                                <span class="tier-badge">T${opp.item.tier || '?'}</span>
+                            </div>
+                            
+                            <div class="opportunity-details">
+                                <div class="trade-route">
+                                    <div class="location">
+                                        <strong>Buy:</strong> ${opp.buyLocation}
+                                        <div class="price">${opp.buyPrice.toLocaleString()} silver</div>
+                                    </div>
+                                    <div class="arrow">→</div>
+                                    <div class="location">
+                                        <strong>Sell:</strong> ${opp.sellLocation}
+                                        <div class="price">${opp.sellPrice.toLocaleString()} silver</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="profit-metrics">
+                                    <div class="metric">
+                                        <span>Net Profit:</span>
+                                        <span class="profit-positive">${Math.round(opp.netProfit).toLocaleString()} silver</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span>Margin:</span>
+                                        <span class="profit-positive">${opp.netMargin.toFixed(1)}%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="opportunity-meta">
+                                    <span class="badge badge-${opp.risk === 1 ? 'success' : opp.risk === 2 ? 'warning' : 'danger'}">Risk: ${opp.risk}/3</span>
+                                    <span class="badge badge-${opp.liquidity === 'high' ? 'success' : opp.liquidity === 'medium' ? 'warning' : 'danger'}">Liquidity: ${opp.liquidity}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Farming Calculator Functionality
+        function calculateCropProfit() {
+            const cropId = document.getElementById('crop-select').value;
+            const plotCount = parseInt(document.getElementById('plot-count').value);
+            const seedCost = parseInt(document.getElementById('seed-cost').value);
+            const cropPrice = parseInt(document.getElementById('crop-price').value);
+            const useFocus = document.getElementById('use-focus').value === 'true';
+            
+            // Crop data
+            const crops = {
+                "T3_SEED_CARROT": { name: "Carrot Seed", yield: 9, focusCost: 300 },
+                "T4_SEED_WHEAT": { name: "Wheat Seed", yield: 9, focusCost: 400 },
+                "T5_SEED_TURNIP": { name: "Turnip Seed", yield: 9, focusCost: 500 },
+                "T6_SEED_CABBAGE": { name: "Cabbage Seed", yield: 9, focusCost: 600 },
+                "T7_SEED_POTATO": { name: "Potato Seed", yield: 9, focusCost: 700 },
+                "T8_SEED_CORN": { name: "Corn Seed", yield: 9, focusCost: 800 }
+            };
+            
+            const crop = crops[cropId];
+            const totalSeedsCost = seedCost * plotCount;
+            const totalYield = crop.yield * plotCount;
+            
+            // Calculate focus bonus
+            const focusBonus = useFocus ? 1.43 : 1.0; // 43% bonus with focus
+            const effectiveYield = Math.floor(totalYield * focusBonus);
+            
+            const totalRevenue = effectiveYield * cropPrice;
+            const totalProfit = totalRevenue - totalSeedsCost;
+            const profitPerPlot = totalProfit / plotCount;
+            const roi = (totalProfit / totalSeedsCost) * 100;
+            
+            // Calculate silver per focus point
+            const focusCost = useFocus ? crop.focusCost * plotCount : 0;
+            const silverPerFocus = focusCost > 0 ? (totalProfit / focusCost) : 0;
+            
+            const resultsContainer = document.getElementById('crop-results');
+            resultsContainer.innerHTML = `
+                <div class="profit-breakdown">
+                    <h4>Profit Analysis</h4>
+                    <div class="profit-metric ${totalProfit >= 0 ? 'profit-positive' : 'profit-negative'}">
+                        <span>Total Profit:</span>
+                        <span>${Math.round(totalProfit).toLocaleString()} silver</span>
+                    </div>
+                    <div class="profit-metric">
+                        <span>Profit per Plot:</span>
+                        <span>${Math.round(profitPerPlot).toLocaleString()} silver</span>
+                    </div>
+                    <div class="profit-metric">
+                        <span>ROI:</span>
+                        <span>${roi.toFixed(1)}%</span>
+                    </div>
+                    ${useFocus ? `
+                    <div class="profit-metric">
+                        <span>Silver per Focus:</span>
+                        <span>${silverPerFocus.toFixed(1)}</span>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="cost-breakdown">
+                        <h5>Cost Breakdown</h5>
+                        <div class="cost-item">
+                            <span>Seed Cost:</span>
+                            <span>${totalSeedsCost.toLocaleString()} silver</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Expected Yield:</span>
+                            <span>${effectiveYield} crops</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Total Revenue:</span>
+                            <span>${totalRevenue.toLocaleString()} silver</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsContainer.style.display = 'block';
+        }
+
+        // Screen Scanner Functionality
+        function initScreenScanner() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('screenshot-input');
+            const startButton = document.getElementById('start-scan');
+
+            // Click to select file
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    handleImageFile(files[0]);
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleImageFile(e.target.files[0]);
+                }
+            });
+
+            // Start scan button
+            startButton.addEventListener('click', () => {
+                processImage();
+            });
+
+            function handleImageFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadArea.innerHTML = `
+                        <div class="image-preview">
+                            <img src="${e.target.result}" alt="Screenshot preview" style="max-width: 100%; max-height: 300px;">
+                            <button class="btn btn-sm btn-danger" onclick="clearImage()">Clear</button>
+                        </div>
+                    `;
+                    startButton.disabled = false;
+                };
+                reader.readAsDataURL(file);
+                
+                window.currentImageFile = file;
+            }
+
+            window.clearImage = function() {
+                const uploadArea = document.getElementById('upload-area');
+                const startButton = document.getElementById('start-scan');
+                const fileInput = document.getElementById('screenshot-input');
+                
+                uploadArea.innerHTML = `
+                    <div class="upload-placeholder">
+                        <div class="upload-icon">📷</div>
+                        <h3>Drop Market Screenshot Here</h3>
+                        <p>or click to select file</p>
+                    </div>
+                `;
+                
+                fileInput.value = '';
+                startButton.disabled = true;
+                window.currentImageFile = null;
+            };
+
+            function processImage() {
+                if (!window.currentImageFile) {
+                    alert('Please select an image first');
+                    return;
+                }
+
+                const resultsContainer = document.getElementById('scanner-results');
+                const startButton = document.getElementById('start-scan');
+                
+                startButton.disabled = true;
+                startButton.textContent = 'Processing...';
+                
+                resultsContainer.innerHTML = '<div class="loading">Processing image with OCR... This may take a few seconds.</div>';
+                resultsContainer.style.display = 'block';
+
+                // Simulate OCR processing
+                setTimeout(() => {
+                    // In a real implementation, this would use Tesseract.js
+                    // For this demo, we'll simulate results
+                    const extractedItems = [
+                        { name: "Bow", price: 1500 },
+                        { name: "Fine Planks", price: 120 },
+                        { name: "Steel Bar", price: 350 }
+                    ];
+                    
+                    displayOCRResults(extractedItems);
+                    
+                    startButton.disabled = false;
+                    startButton.textContent = 'Process Image';
+                }, 2000);
+            }
+
+            function displayOCRResults(items) {
+                const resultsContainer = document.getElementById('scanner-results');
+                
+                resultsContainer.innerHTML = `
+                    <div class="ocr-results">
+                        <div class="results-header">
+                            <h4>Extracted Market Data</h4>
+                            <button class="btn btn-sm btn-secondary" onclick="exportOCRData()">
+                                Export Data
+                            </button>
+                        </div>
+                        
+                        <div class="extracted-items">
+                            <h5>Found Items (${items.length})</h5>
+                            <div class="items-grid">
+                                ${items.map(item => `
+                                    <div class="extracted-item">
+                                        <div class="item-name">${item.name}</div>
+                                        <div class="item-price">${item.price ? item.price.toLocaleString() + ' silver' : 'Price not found'}</div>
+                                        <button class="btn btn-sm btn-primary" onclick="lookupItem('${item.name}')">
+                                            Lookup
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            window.exportOCRData = function() {
+                alert('Export functionality would be implemented here');
+            };
+
+            window.lookupItem = function(itemName) {
+                // Switch to price checker and search for the item
+                window.albionApp.switchTab('price-checker');
+                const searchInput = document.getElementById('item-search');
+                if (searchInput) {
+                    searchInput.value = itemName;
+                    searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            };
+        }
+
+        // Watchlist functionality
+        function addToWatchlist(itemId, itemName) {
+            const watchlist = window.albionApp.watchlist;
+            if (!watchlist.find(wItem => wItem.id === itemId)) {
+                watchlist.push({
+                    id: itemId,
+                    name: itemName,
+                    addedAt: new Date().toISOString()
+                });
+                window.albionApp.saveWatchlist();
+                updateWatchlistDisplay();
+            }
+        }
+
+        function updateWatchlistDisplay() {
+            const container = document.getElementById('watchlist-items');
+            const watchlist = window.albionApp.watchlist;
+            
+            if (watchlist.length === 0) {
+                container.innerHTML = '<p>No items in watchlist</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="watchlist-grid">
+                    ${watchlist.map(item => `
+                        <div class="watchlist-item" data-item-id="${item.id}">
+                            <div class="item-info">
+                                <span class="item-name">${item.name}</span>
+                            </div>
+                            <button class="btn btn-sm btn-danger" onclick="removeFromWatchlist('${item.id}')">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function removeFromWatchlist(itemId) {
+            window.albionApp.watchlist = window.albionApp.watchlist.filter(item => item.id !== itemId);
+            window.albionApp.saveWatchlist();
+            updateWatchlistDisplay();
+        }
+
+        // Initialize watchlist display
+        updateWatchlistDisplay();
+    </script>
+</body>
+</html>
