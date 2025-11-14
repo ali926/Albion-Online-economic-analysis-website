@@ -1,0 +1,57 @@
+{
+  "items": [
+    {
+      "id": "T4_2H_BOW",
+      "name": "Bow",
+      "tier": 4,
+      "enchantment": 0,
+      "category": "weapon",
+      "subcategory": "bow",
+      "crafting_category": "fletcher"
+    },
+    {
+      "id": "T4_2H_BOW@1",
+      "name": "Bow (Uncommon)",
+      "tier": 4,
+      "enchantment": 1,
+      "category": "weapon", 
+      "subcategory": "bow",
+      "crafting_category": "fletcher"
+    },
+    {
+      "id": "T4_2H_BOW@2",
+      "name": "Bow (Rare)",
+      "tier": 4,
+      "enchantment": 2,
+      "category": "weapon",
+      "subcategory": "bow", 
+      "crafting_category": "fletcher"
+    },
+    {
+      "id": "T4_2H_BOW@3",
+      "name": "Bow (Legendary)",
+      "tier": 4,
+      "enchantment": 3,
+      "category": "weapon",
+      "subcategory": "bow",
+      "crafting_category": "fletcher"
+    },
+    {
+      "id": "T4_2H_BOW@4",
+      "name": "Bow (Mythical)",
+      "tier": 4,
+      "enchantment": 4,
+      "category": "weapon",
+      "subcategory": "bow",
+      "crafting_category": "fletcher"
+    }
+  ],
+  "categories": {
+    "weapon": ["axe", "bow", "crossbow", "dagger", "firestaff", "froststaff", "hammer", "mace", "naturestaff", "quarterstaff", "spear", "sword"],
+    "armor": ["cloth_head", "cloth_armor", "cloth_shoes", "leather_head", "leather_armor", "leather_shoes", "plate_head", "plate_armor", "plate_shoes"],
+    "resource": ["wood", "planks", "ore", "metalbar", "fiber", "cloth", "hide", "leather", "stone", "stoneblock"],
+    "consumable": ["food", "potion", "fishing"],
+    "tool": ["pickaxe", "axe", "sickle", "skinningknife", "fishingrod"],
+    "mount": ["horse", "direwolf", "transport"]
+  }
+}
